@@ -1,0 +1,95 @@
+# =============================================================================
+# docker-compose.yml — Orchestrates your container(s) for local development
+# =============================================================================
+#
+# WHAT IS DOCKER COMPOSE?
+#   Docker Compose is a tool for defining and running multi-container apps.
+#   Even for a single container, it's useful because it replaces a long
+#   `docker run` command with a simple `docker-compose up`.
+#
+# WITHOUT compose, you'd run:
+#   docker run -it \
+#     --env-file .env \
+#     -v $(pwd)/documents:/app/documents \
+#     -v $(pwd)/storage:/app/storage \
+#     -v model-cache:/home/appuser/.cache \
+#     rag-prototype python main.py --interactive
+#
+# WITH compose, you just run:
+#   docker-compose run --rm rag python main.py --interactive
+#
+# COMMON COMMANDS:
+#   docker-compose build          # Build the image
+#   docker-compose run --rm rag python main.py --index
+#   docker-compose run --rm rag python main.py --interactive
+#   docker-compose run --rm rag python main.py --query "your question"
+# =============================================================================
+
+# The version of the Compose file format to use
+# '3.8' is widely supported and has all the features we need
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # The main RAG service
+  # ---------------------------------------------------------------------------
+  rag:
+    # 'build: .' tells Compose to build the image from the Dockerfile
+    # in the current directory (.)
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Name the built image so it's easy to reference
+    image: rag-prototype:latest
+
+    # Load environment variables from .env file automatically
+    # This is where ANTHROPIC_API_KEY comes from
+    # Never hardcode secrets here — always use env_file or environment
+    env_file:
+      - .env
+
+    # ---------------------------------------------------------------------------
+    # VOLUMES — shared storage between host and container
+    # ---------------------------------------------------------------------------
+    # Volumes solve a core Docker problem: containers are ephemeral (temporary).
+    # When a container stops, any files written inside it are LOST.
+    # Volumes let the container read/write files that persist on your host machine.
+    #
+    # Syntax: host_path:container_path
+    # ./documents:/app/documents means your local documents/ folder IS the
+    # container's /app/documents folder — changes in either place are instant.
+    volumes:
+      # Your document files — put .txt and .md files here on your host
+      # The container reads them as if they're at /app/documents
+      - ./documents:/app/documents
+
+      # The vector index — generated inside the container, persists on your host
+      # After running --index, you'll see vectors.npz and chunks.json appear here
+      - ./storage:/app/storage
+
+      # HuggingFace model cache — the embedding model (~80MB) is downloaded once
+      # and stored in this named volume. Without this, every container restart
+      # would re-download the model from the internet.
+      - model-cache:/home/appuser/.cache
+
+    # Keep stdin open — required for --interactive mode (reading keyboard input)
+    stdin_open: true
+
+    # Allocate a pseudo-TTY — required for coloured output and interactive prompts
+    tty: true
+
+    # Default command when you run `docker-compose up`
+    # (usually you'll override this with `docker-compose run --rm rag ...`)
+    command: ["python", "main.py", "--help"]
+
+# =============================================================================
+# Named Volumes — managed by Docker, persist across container restarts
+# =============================================================================
+# Unlike bind mounts (./local:/container), named volumes are managed by Docker.
+# Docker decides where they live on the host (usually /var/lib/docker/volumes/).
+# Use named volumes for things that belong to Docker (model cache),
+# and bind mounts for things that belong to you (documents, storage).
+volumes:
+  model-cache:
+    # No config needed — Docker creates and manages this automatically

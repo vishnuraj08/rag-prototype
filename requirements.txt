@@ -1,0 +1,22 @@
+# =============================================================================
+# requirements.txt — Python Dependencies
+# =============================================================================
+# Install all dependencies with:
+#   pip install -r requirements.txt
+#
+# What each package does:
+# =============================================================================
+
+# Anthropic Python SDK — for calling Claude API (the LLM generator)
+anthropic>=0.40.0
+
+# Sentence Transformers — for creating text embeddings locally (no API needed)
+# Downloads the embedding model (~80MB) automatically on first use
+sentence-transformers>=3.0.0
+
+# NumPy — for vector math (cosine similarity, array operations)
+numpy>=1.24.0
+
+# torch — required by sentence-transformers (neural network backend)
+# CPU-only version is sufficient for this prototype
+torch>=2.0.0
