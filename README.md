@@ -75,7 +75,7 @@ python main.py --index --interactive
 | `TOP_K` | 3 | More chunks = more context, but also more noise |
 | `MIN_SIMILARITY_SCORE` | 0.2 | Higher = stricter relevance filter |
 | `EMBEDDING_MODEL` | all-MiniLM-L6-v2 | Swap for accuracy/speed tradeoff |
-| `CLAUDE_MODEL` | claude-sonnet-4-... | Swap for different Claude model |
+| `LLM_MODEL` | claude-sonnet-4-6 | Swap for any compatible LLM model |
 
 ## How to Extend
 

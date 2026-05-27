@@ -30,7 +30,7 @@
 import logging
 import anthropic
 from anthropic import Anthropic
-from config import CLAUDE_MODEL, MAX_TOKENS, SYSTEM_PROMPT
+from config import LLM_MODEL, MAX_TOKENS, SYSTEM_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class Generator:
         # Anthropic() constructor looks for ANTHROPIC_API_KEY env variable
         # No need to hardcode the key — that would be a security risk!
         self.client = Anthropic()
-        logger.info(f"Generator initialized with model: {CLAUDE_MODEL}")
+        logger.info(f"Generator initialized with model: {LLM_MODEL}")
 
     def generate(self, query: str, context: str) -> str:
         """
@@ -82,7 +82,7 @@ class Generator:
             # Call the Anthropic Messages API
             # This is a synchronous (blocking) call — it waits for the full response
             response = self.client.messages.create(
-                model=CLAUDE_MODEL,         # Which Claude model to use (from config)
+                model=LLM_MODEL,         # Which Claude model to use (from config)
                 max_tokens=MAX_TOKENS,      # Max length of the response
                 system=SYSTEM_PROMPT,       # Sets Claude's behavior/role
                 messages=[

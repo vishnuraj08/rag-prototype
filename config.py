@@ -72,8 +72,18 @@ MIN_SIMILARITY_SCORE = 0.2
 # GENERATION — How we call the LLM
 # -----------------------------------------------------------------------------
 
-# Claude model to use for generating answers
-CLAUDE_MODEL = "claude-sonnet-4-6"
+# LLM model to use for generating answers.
+# This controls which model the Generator calls.
+# Swap this string to change models — no other file needs to change.
+#
+# Anthropic (Claude) models:
+#   "claude-sonnet-4-6"          ← current default (fast, capable)
+#   "claude-haiku-4-5-20251001"  ← faster and cheaper
+#   "claude-opus-4-6"            ← most capable, slower
+#
+# To use a different provider (OpenAI, Gemini etc.), you would also need
+# to update components/generator.py to use a different SDK client.
+LLM_MODEL = "claude-sonnet-4-6"
 
 # Max tokens the LLM can generate in its response
 MAX_TOKENS = 1024
