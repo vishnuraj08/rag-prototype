@@ -20,3 +20,13 @@ numpy>=1.24.0
 # torch — required by sentence-transformers (neural network backend)
 # CPU-only version is sufficient for this prototype
 torch>=2.0.0
+
+# pytest — the test framework we use for all tests in tests/
+# Run tests with:  pytest tests/ -v
+pytest>=7.0.0
+
+# openai — only needed when LLM_PROVIDER = "ollama" in config.py
+# Ollama exposes an OpenAI-compatible API, so we reuse this client
+# pointed at localhost instead of api.openai.com
+# Install when using Ollama: pip install openai
+# openai>=1.0.0
