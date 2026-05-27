@@ -72,18 +72,32 @@ MIN_SIMILARITY_SCORE = 0.2
 # GENERATION — How we call the LLM
 # -----------------------------------------------------------------------------
 
-# LLM model to use for generating answers.
-# This controls which model the Generator calls.
-# Swap this string to change models — no other file needs to change.
+# Which LLM provider to use.
+# Switch this one value to change the entire generation backend.
 #
-# Anthropic (Claude) models:
-#   "claude-sonnet-4-6"          ← current default (fast, capable)
-#   "claude-haiku-4-5-20251001"  ← faster and cheaper
-#   "claude-opus-4-6"            ← most capable, slower
+# Options:
+#   "anthropic" → calls Claude via Anthropic API (needs ANTHROPIC_API_KEY)
+#   "ollama"    → calls a local model via Ollama (no key needed, runs on your machine)
+LLM_PROVIDER = "ollama"
+
+# Which model to use. The right value depends on which provider you chose above.
 #
-# To use a different provider (OpenAI, Gemini etc.), you would also need
-# to update components/generator.py to use a different SDK client.
-LLM_MODEL = "claude-sonnet-4-6"
+# For LLM_PROVIDER = "anthropic":
+#   "claude-sonnet-4-6"          ← fast and capable (recommended)
+#   "claude-haiku-4-5-20251001"  ← fastest and cheapest
+#   "claude-opus-4-6"            ← most capable, slowest
+#
+# For LLM_PROVIDER = "ollama":
+#   "llama3.2"    ← Meta's Llama 3.2 (you already have this — run `ollama ls` to verify)
+#   "llama3"      ← Meta's Llama 3 (older, slightly larger)
+#   "mistral"     ← Mistral 7B (fast, lightweight)
+#   "phi3"        ← Microsoft Phi-3 (very small, runs on weak hardware)
+#   Run `ollama ls` to see which models you have downloaded locally.
+LLM_MODEL = "llama3.2"
+
+# Ollama server URL — only used when LLM_PROVIDER = "ollama"
+# Default is localhost:11434 which is where Ollama runs after `ollama serve`
+OLLAMA_BASE_URL = "http://localhost:11434"
 
 # Max tokens the LLM can generate in its response
 MAX_TOKENS = 1024
