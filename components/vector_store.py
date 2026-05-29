@@ -144,7 +144,8 @@ class VectorStore:
             if len(results) >= top_k:
                 break
 
-        logger.info(f"Search returned {len(results)} results (top score: {results[0][1]:.3f if results else 'N/A'})")
+        top_score = f"{results[0][1]:.3f}" if results else "N/A"
+        logger.info(f"Search returned {len(results)} results (top score: {top_score})")
         return results
 
     def save(self) -> None:

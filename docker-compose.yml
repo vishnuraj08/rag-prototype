@@ -31,6 +31,23 @@ version: '3.8'
 
 services:
   # ---------------------------------------------------------------------------
+  # Ollama — local LLM server (Option C: fully self-contained stack)
+  # ---------------------------------------------------------------------------
+  # Uncomment this service to run Ollama as a container alongside the RAG app.
+  # Both containers share the 'rag-network' so the app can reach Ollama at
+  # http://ollama:11434 instead of http://localhost:11434.
+  #
+  # If you enable this, also change OLLAMA_BASE_URL in config.py to:
+  #   OLLAMA_BASE_URL = "http://ollama:11434"
+  #
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   volumes:
+  #     - ollama-models:/root/.ollama   # persists downloaded models
+  #   networks:
+  #     - rag-network
+
+  # ---------------------------------------------------------------------------
   # The main RAG service
   # ---------------------------------------------------------------------------
   rag:

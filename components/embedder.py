@@ -30,9 +30,25 @@ import numpy as np
 from typing import List
 from sentence_transformers import SentenceTransformer
 from components.chunker import Chunk
-from config import EMBEDDING_MODEL
+from config import EMBEDDING_MODEL, DEVICE
 
 logger = logging.getLogger(__name__)
+
+
+def _resolve_device(device: str) -> str:
+    """
+    Resolve the configured DEVICE string to the actual device to use.
+
+    "auto" checks if CUDA is available at runtime and picks accordingly.
+    This means you never have to change config.py when moving between
+    a GPU machine and a CPU-only machine — it just works.
+    """
+    if device == "auto":
+        import torch
+        resolved = "cuda" if torch.cuda.is_available() else "cpu"
+        logger.info(f"DEVICE='auto' resolved to: '{resolved}'")
+        return resolved
+    return device
 
 
 class TextEmbedder:
@@ -54,12 +70,13 @@ class TextEmbedder:
         Args:
             model_name: HuggingFace model identifier or local path
         """
-        logger.info(f"Loading embedding model: {model_name}")
+        self.device = _resolve_device(DEVICE)
+        logger.info(f"Loading embedding model: {model_name} on device: {self.device}")
         logger.info("(First run downloads ~80MB — subsequent runs use cache)")
 
-        # SentenceTransformer loads the model weights into RAM
-        # It handles downloading, caching, and inference automatically
-        self.model = SentenceTransformer(model_name)
+        # SentenceTransformer loads the model weights into RAM (or GPU VRAM)
+        # device parameter controls whether it runs on CPU or GPU
+        self.model = SentenceTransformer(model_name, device=self.device)
         self.model_name = model_name
 
         # Store the embedding dimension for reference

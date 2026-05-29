@@ -100,6 +100,21 @@ COPY . .
 # Even if they're empty, we need them for volumes to mount correctly.
 RUN mkdir -p documents storage
 
+# -----------------------------------------------------------------------------
+# Pre-download the embedding model into the image
+# -----------------------------------------------------------------------------
+# Without this, the model is downloaded at runtime on first use (~90MB from HuggingFace).
+# Baking it into the image means:
+#   1. The image works completely OFFLINE (no internet needed at runtime)
+#   2. Container startup is instant — no download wait
+#   3. The other PC just needs the image file — nothing else
+#
+# TRANSFORMERS_OFFLINE=1 tells HuggingFace to never try the internet after this.
+# HF_HUB_DISABLE_SYMLINKS_WARNING=1 suppresses the Windows symlink warning.
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+ENV TRANSFORMERS_OFFLINE=1
+ENV HF_HUB_OFFLINE=1
+
 
 # -----------------------------------------------------------------------------
 # Security: run as non-root user

@@ -52,6 +52,21 @@ CHUNK_OVERLAP = 50
 #   - "paraphrase-MiniLM-L3-v2"  → fastest, least accurate
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
+# Which device to run the embedding model on.
+#
+#   "auto" → use GPU (CUDA) if available, fall back to CPU automatically
+#   "cpu"  → always use CPU (safe on any machine, slower)
+#   "cuda" → force GPU (will fail if CUDA is not available)
+#
+# GPU is ~10-20x faster for embedding large document sets.
+# For small document sets (<1000 chunks) the difference is minimal.
+#
+# IMPORTANT: Make sure your PyTorch build matches your CUDA version.
+#   CPU only:  pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   CUDA 12.1: pip install torch --index-url https://download.pytorch.org/whl/cu121
+#   CUDA 11.8: pip install torch --index-url https://download.pytorch.org/whl/cu118
+DEVICE = "auto"
+
 
 # -----------------------------------------------------------------------------
 # RETRIEVAL — How we search for relevant chunks
